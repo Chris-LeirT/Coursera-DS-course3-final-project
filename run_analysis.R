@@ -21,23 +21,19 @@ train_set<-create_table('UCI HAR Dataset\\train\\X_train.txt',feature_names,
                          'UCI HAR Dataset\\train\\y_train.txt','activities')
 test_set<-create_table('UCI HAR Dataset\\test\\X_test.txt',feature_names,
                         'UCI HAR Dataset\\test\\y_test.txt','activities')
-
 subject <- create_table('UCI HAR Dataset\\train\\subject_train.txt','subject',
                         'UCI HAR Dataset\\test\\subject_test.txt','subject',
                         rbin=TRUE)
-
 full_data <- rbind(train_set,test_set)
 full_data <- cbind(subject,full_data)
 
 ### 2. EXTRACTS ONLY THE MEASUREMENTS ###
 ### ON THE MEAN AND STANDARD DEVIATION FOR EACH MEASUREMENT. ###
-
 # Search through names with regex to subset the full_data
 mean_sd_col <- grep('subject|mean|std|activities',names(full_data),value=TRUE)
 mean_sd_data <- select(full_data,mean_sd_col)
 
 ### 3. USES DESCRIPTIVE ACTIVITY NAMES TO NAME THE ACTIVITIES IN THE DATA SET ###
-
 activity_label <- read.table(file='UCI HAR Dataset\\activity_labels.txt')[,2]
 # Replace values of mean_sd_data$activities with above list
 for (i in c(1:6)){
@@ -54,5 +50,4 @@ for (i in c(1:6)){
 # 5.1. Create a group of activities and subject, 
 # then calculate the mean of all column except the group. Then write result
 tidy_dataset <- mean_sd_data[,lapply(.SD,mean), by = .(activities, subject)]
-
 write.table(tidy_dataset,'tidy_dataset.txt',row.name=FALSE)
